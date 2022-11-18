@@ -35,6 +35,9 @@
         .then((response) => response.json())
         .then((data) => {
             //$("#example-table").tabulator("setData", sampleData);
+            setTimeout(()=>{
+
+            
             var table = new Tabulator("#example-table", {
                 data: [...data.data],
                 autoColumns:false, //create columns from data field names,
@@ -60,7 +63,8 @@
                 columnDefaults:{
                     tooltip:true,         //show tool tips on cells
                 }               
-            });        
+            });   
+            },5000);     
         })
         .catch((err) =>  {
             console.log(err.message, err.response.data, err.response.status);
