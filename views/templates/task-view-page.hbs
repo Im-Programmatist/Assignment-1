@@ -1,0 +1,76 @@
+<link href="/public/css/jquery-ui.css" rel="stylesheet" media="all">
+<link href="/public/css/tabulator.css" rel="stylesheet" media="all">
+{{>header}}
+<div class="section__content section__content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- USER DATA-->
+                <div class="user-data__footer">
+                    <a href="/" class="au-btn au-btn-load">Back</a>
+                </div>
+                <div class="user-data m-b-30">
+                    <h3 class="title-3 m-b-30">
+                        <i class="zmdi zmdi-account-calendar"></i>
+                        API Data
+                    </h3>
+                    <div class="table-responsive table-data">
+                        <div id="example-table"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{>footer}}
+<script src="/public/js/jQuery.js"></script>
+<script src="/public/js/jquery-ui.min.js"></script>
+<script src="/public/js/tabulator.js"></script>
+<script src="/public/js/tabulator.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/5.4.2/js/tabulator.min.js" integrity="sha512-l597Xpz0VFtCrB9DJwOTrxj2boDwk/dLrGGx1XVWCzmoFWEU+1G2Tpsud4Tw6IzH4nIKerjYp8lSFPVVecKXkA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    try{
+        var result = {};
+        fetch("http://localhost:7000/api-data", { method: "GET" })
+        .then((response) => response.json())
+        .then((data) => {
+            //$("#example-table").tabulator("setData", sampleData);
+            var table = new Tabulator("#example-table", {
+                data: [...data.data],
+                autoColumns:false, //create columns from data field names,
+                columns:[
+                    {title:"Link Name", field:"text11"},
+                    {title:"Associated Facility", field:"textBlock5"},
+                    {title:"Associated Facility ID", field:"textBlock3"},
+                    {title:"Excluded Facility List ID", field:"text9"},
+                    {title:"Alignment Status", field:"text3"},
+                    {title:"Inactive Reason Code", field:"text4"}
+                ],
+                layout:"fitColumns",      //fit columns to width of table
+                responsiveLayout:"hide",  //hide columns that dont fit on the table
+                addRowPos:"top",          //when adding a new row, add it to the top of the table
+                history:true,             //allow undo and redo actions on the table
+                pagination:"local",       //paginate the data
+                paginationSize:10,         //allow 7 rows per page of data
+                paginationCounter:"rows", //display count of paginated rows in footer
+                movableColumns:true,      //allow column order to be changed
+                initialSort:[             //set the initial sort order of the data
+                    {column:"Link Name", dir:"asc"},
+                ],
+                columnDefaults:{
+                    tooltip:true,         //show tool tips on cells
+                }               
+            });        
+        })
+        .catch((err) =>  {
+            console.log('error -',err.message);
+        });
+    }
+    catch(err){
+        console.log(err);
+    }
+   
+    // $("#example-table").tabulator("setData", "http://www.exampleurl.com/data");
+    //$("#example-table").tabulator("setData", "https://reqres.in/api/users", {page:"1"}); */
+
+</script>
