@@ -72,23 +72,47 @@ app.get('/task1', async(req, res)=>{
 
 app.use('/task2', assignmentAPIRouter );
 
+
+const refreshToken = async() =>{
+    await axios.get(process.env.TOKEN_API)
+    .then((res) => {
+        if(res.statusCode == 200){
+            process.env['BHRESTTOKEN'] = res.response.bhRestToken;
+        }        
+    }).catch((err) =>  {
+        console.log('refresh token error', err.response);
+    });
+}
 app.get('/api-data', async(req, res)=>{
+    var result = {};
     try{
-        var result = {};
         const apiURL = process.env.DATA_API+process.env.CLIENT_CORPORATION_ID+process.env.BHRESTTOKEN;
         await axios.get(apiURL)
         .then((res) => {
-            result.length = res.data.length;  
-            result.data = res.data.data;        
+            if(res.data.count>0)
+                result.data = res.data.data; 
+            else
+                result.data = [];
+                   
         }).catch((err) =>  {
-            console.log('error -',err.message);
+            if(err.response.status == 401 && err.response.data == "Bad 'BhRestToken' or timed-out." )
+                result.message = err.response.data;          
+            else
+                result.message = "No data found!"
+            
+            result.length = 0;
+            result.data = [];
+            result.status = err.response.status;
+            //refreshToken();  
+            res.redirect('/task1');
         });
-        res.send(result);
     }
     catch(err){
-        console.log(err);
-        //token=undefined;
-        req.flash('message', "Token Expired! Please refresh token.");
-        res.redirect("/index");
+        result.length = 0;
+        result.data = [];
+        result.status = err.response.data;
+        //refreshToken();
+        res.redirect('/task1');
     }
+    res.send(result);
 });

@@ -63,11 +63,11 @@
             });        
         })
         .catch((err) =>  {
-            console.log('error -',err.message);
+            console.log(err.message, err.response.data, err.response.status);
         });
     }
     catch(err){
-        console.log(err);
+        console.log(err.message, err.response.data, err.response.status);
     }
    
     // $("#example-table").tabulator("setData", "http://www.exampleurl.com/data");

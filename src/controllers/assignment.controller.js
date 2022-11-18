@@ -10,7 +10,7 @@ async function fetch(req, res, next) {
             result.length = res.data.data.length;  
             result.data = res.data.data;        
         }).catch((err) =>  {
-            console.log('error -',err.message);
+            console.log(err.response.data, err.response.status);
         });
         res.render('assignment', {apiData: result});
     }catch(err){
