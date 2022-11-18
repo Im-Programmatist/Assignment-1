@@ -72,7 +72,6 @@ app.get('/task1', async(req, res)=>{
 
 app.use('/task2', assignmentAPIRouter );
 
-
 const refreshToken = async() =>{
     await axios.get(process.env.TOKEN_API)
     .then((res) => {
