@@ -53,6 +53,7 @@ hbs.registerHelper('toJSON', function(obj) {
 hbs.registerHelper('alterStatus', function(status) {
     return (status.toLowerCase() == "inactive") ? arguments[2] : arguments[1];
 });
+var environment = process.env.NODE_ENV;
 
 //Prepare server to listen
 const PORT  = process.env.PORT || 7000;
@@ -67,7 +68,12 @@ app.get('/', (req, res, next) => {
 });
 
 app.get('/task1/:token?', async(req, res)=>{
-    res.render('task-view-page', {token: req.params.token});
+    var api = '';
+    if(environment === 'development')
+        api = process.env.LOCAL_API_URL
+    else
+        api = 'http://3.110.118.160:7000/api-data/';
+    res.render('task-view-page', {token: req.params.token, localAPI:api });
 });
 
 app.use('/task2/:token?', assignmentAPIRouter );

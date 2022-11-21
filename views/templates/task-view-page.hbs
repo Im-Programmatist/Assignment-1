@@ -14,6 +14,7 @@
                         <i class="zmdi zmdi-account-calendar"></i>
                         API Data
                         <input id="BhRestTokenId" type="hidden" readonly value="{{token}}"/>
+                        <input id="apiId" type="hidden" readonly value="{{localAPI}}"/>
                     </h3>
                     <div class="table-responsive table-data">
                         <div id="example-table"></div>
@@ -33,7 +34,8 @@
     try{
         var result = {};
         var token = document.getElementById('BhRestTokenId').value;
-        var url = `http://localhost:7000/api-data/`+ token;
+        var api = document.getElementById('apiId').value;
+        var url = api+token;
         fetch(url, { method: "GET" })
         .then((response) => response.json())
         .then((data) => {
