@@ -7,11 +7,22 @@
             <div ><!-- class="main-content"--->
                 <div class="section__content section__content">
                     <div class="container-fluid">
-                        <div class="user-data__footer">
-                            <a href="/task1" class="au-btn au-btn-load">Fetch API Data - 1</a>
+                        <div class="row" style="margin-top:10px"></div>
+                        <div class="row">
+                            <div class="row col-md-3"></div>
+                            <div class="row col-md-3">
+                                <lable>Enter BhRestToken value if it is expire </lable> 
+                            </div>
+                            <div class="row col-md-3">
+                                <input id="BhRestTokenId" type="text" class="form-control" placeholder="BhRestToken" value="" />
+                            </div>
+                            <div class="row col-md-3"></div>
                         </div>
                         <div class="user-data__footer">
-                            <a href="/task2" class="au-btn au-btn-load">Fetch API Data - 2</a>
+                            <a href="#" onclick="myTask1()" class="au-btn au-btn-load">Fetch API Data - 1</a>
+                        </div>
+                        <div class="user-data__footer">
+                            <a href="#" onclick="myTask2()"  class="au-btn au-btn-load">Fetch API Data - 2</a>
                         </div>
                        
                     </div>
@@ -21,3 +32,21 @@
     </div>
 {{>footer}}
 {{!-- {{JSON.stringify(objTest)}} --}}
+<script>
+    function myTask1() {
+        var token = document.getElementById('BhRestTokenId').value;
+        //var hello = document.getElementsByTagName('a')[0].getAttribute('href');
+         var url="/task1/"+token;
+        console.log( url);
+        $(location).prop('href', url)
+    }
+    function myTask2() {
+        var token = document.getElementById('BhRestTokenId').value;
+        //var hello = document.getElementsByTagName('a')[0].getAttribute('href');
+        var url="/task2/"+token;
+        console.log( url);
+        $(location).prop('href', url)
+    }
+    
+
+</script>

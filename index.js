@@ -66,11 +66,11 @@ app.get('/', (req, res, next) => {
     res.render('index');
 });
 
-app.get('/task1', async(req, res)=>{
-    res.render('task-view-page');
+app.get('/task1/:token?', async(req, res)=>{
+    res.render('task-view-page', {token: req.params.token});
 });
 
-app.use('/task2', assignmentAPIRouter );
+app.use('/task2/:token?', assignmentAPIRouter );
 
 const refreshToken = async() =>{
     await axios.get(process.env.TOKEN_API)
@@ -82,10 +82,11 @@ const refreshToken = async() =>{
         console.log('refresh token error', err.response);
     });
 }
-app.get('/api-data', async(req, res)=>{
+app.get('/api-data/:token?', async(req, res)=>{
     var result = {};
     try{
-        const apiURL = process.env.DATA_API+process.env.CLIENT_CORPORATION_ID+process.env.BHRESTTOKEN;
+        var token = req.param.token || process.env.BHRESTTOKEN;
+        const apiURL = process.env.DATA_API+process.env.CLIENT_CORPORATION_ID+token;
         await axios.get(apiURL)
         .then((res) => {
             if(res.data.count>0)
