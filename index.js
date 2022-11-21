@@ -53,7 +53,6 @@ hbs.registerHelper('toJSON', function(obj) {
 hbs.registerHelper('alterStatus', function(status) {
     return (status.toLowerCase() == "inactive") ? arguments[2] : arguments[1];
 });
-var environment = process.env.NODE_ENV;
 
 //Prepare server to listen
 const PORT  = process.env.PORT || 7000;
@@ -67,58 +66,57 @@ app.get('/', (req, res, next) => {
     res.render('index');
 });
 
-app.get('/task1/:token?', async(req, res)=>{
-    var api = '';
-    if(environment === 'development')
-        api = process.env.LOCAL_API_URL
-    else
-        api = 'http://3.110.118.160:7000/api-data/';
-    res.render('task-view-page', {token: req.params.token, localAPI:api });
+app.get('/task1', async(req, res)=>{
+    refreshToken();
+    res.render('task1');
 });
 
-app.use('/task2/:token?', assignmentAPIRouter );
+app.use('/task2', assignmentAPIRouter );
 
 const refreshToken = async() =>{
-    await axios.get(process.env.TOKEN_API)
+    axios.get(process.env.TOKEN_API,{
+        headers: {
+            'Content-Type' : 'application/json',
+            'Authorization' : 'Basic dXNlci50ZXN0OlBhc3N3b3JkQDEyMw==' //the token is a variable which holds the token
+        }
+    })
     .then((res) => {
-        if(res.statusCode == 200){
-            process.env['BHRESTTOKEN'] = res.response.bhRestToken;
-        }        
+        if(res.data.statusCode == 200){
+            console.log('refresh token resoonse', res.data.response);
+            process.env['BHRESTTOKEN'] = res.data.response.bhRestToken;
+        }      
     }).catch((err) =>  {
-        console.log('refresh token error', err.response);
-    });
+        console.log('refresh token error', err);
+    })
 }
-app.get('/api-data/:token?', async(req, res)=>{
+app.get('/api-data', async(req, res)=>{
     var result = {};
     try{
-        var token = req.param.token || process.env.BHRESTTOKEN;
+        console.log('result in local api', process.env.BHRESTTOKEN);
+        var token = process.env.BHRESTTOKEN;
         const apiURL = process.env.DATA_API+process.env.CLIENT_CORPORATION_ID+token;
         await axios.get(apiURL)
-        .then((res) => {
-            if(res.data.count>0)
-                result.data = res.data.data; 
+        .then((resData) => {
+            if(resData.data.count>0)
+                result.data = resData.data.data; 
             else
-                result.data = [];
-                   
-        }).catch((err) =>  {
-            if(err.response.status == 401 && err.response.data == "Bad 'BhRestToken' or timed-out." )
-                result.message = err.response.data;          
-            else
-                result.message = "No data found!"
+                result.data = []; 
             
-            result.length = 0;
+                console.log('result data ', result);
+            res.json(result);
+        }).catch(async(err) =>  {
+            console.log('catch error - ',err.response.data );
+            //refreshToken();
+            //res.redirect('/');
             result.data = [];
-            result.status = err.response.status;
-            //refreshToken();  
-            res.redirect('/task1');
+            res.json(result);
         });
     }
     catch(err){
-        result.length = 0;
-        result.data = [];
-        result.status = err.response.data;
+        console.log('catch error - ',err.response.data );
         //refreshToken();
-        res.redirect('/task1');
+        //res.redirect('/');
+        result.data = [];
+        res.json(result);
     }
-    res.send(result);
 });

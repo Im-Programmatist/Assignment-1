@@ -1,3 +1,6 @@
 # Dependency directories
 node_modules/
 ./node_modules/
+
+./src/configs/.env
+src/configs/.env
