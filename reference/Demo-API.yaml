@@ -4,6 +4,8 @@ x-stoplight:
 info:
   title: Demo API
   version: '1.0'
+  summary: 'This is demo '
+  description: 'aefjbk jbwkqjbvc '
 servers:
   - url: 'http://localhost:3000'
 paths:
